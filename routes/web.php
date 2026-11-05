@@ -3,13 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\MovieController;
 
-// Rute Beranda Publik
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// Rute Publik Customer Film
+Route::get('/', [MovieController::class, 'index'])->name('home');
+Route::get('/movies', [MovieController::class, 'catalog'])->name('movies.catalog');
+Route::get('/movies/{id}', [MovieController::class, 'show'])->name('movies.show');
 
-// Rute Jembatan Dashboard (Mengarahkan sesuai role agar tidak pernah 404)
+// Rute Jembatan Dashboard (Mengarahkan sesuai role)
 Route::middleware(['auth'])->get('/dashboard', function () {
     if (auth()->user()->isAdmin()) {
         return redirect()->route('admin.dashboard');
@@ -17,7 +18,7 @@ Route::middleware(['auth'])->get('/dashboard', function () {
     return redirect()->route('home');
 })->name('dashboard');
 
-// Rute Logout Darurat/Instan (Bisa diakses via link GET di URL untuk mempermudah dev)
+// Rute Logout Darurat
 Route::get('/force-logout', function (Request $request) {
     Auth::logout();
     $request->session()->invalidate();
