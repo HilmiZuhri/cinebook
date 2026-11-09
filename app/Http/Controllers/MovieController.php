@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\TmdbService;
 use Illuminate\Http\Request;
+use App\Models\Showtime;
 
 class MovieController extends Controller
 {
@@ -63,7 +64,7 @@ class MovieController extends Controller
     {
         $movie = $this->tmdb->getMovieDetails($id);
 
-        // Cari video trailer YouTube resmi jika ada
+        // Cari trailer YouTube
         $trailerKey = null;
         if (!empty($movie['videos']['results'])) {
             foreach ($movie['videos']['results'] as $video) {
@@ -74,9 +75,20 @@ class MovieController extends Controller
             }
         }
 
+        // Ambil jadwal tayang film ini, kelompokkan berdasarkan nama Bioskop
+        $showtimes = Showtime::with(['studio.cinema'])
+            ->where('tmdb_movie_id', $id)
+            ->where('start_time', '>=', now())
+            ->orderBy('start_time')
+            ->get()
+            ->groupBy(function ($item) {
+                return $item->studio->cinema->name;
+            });
+
         return view('movies.show', [
             'movie' => $movie,
             'trailerKey' => $trailerKey,
+            'showtimes' => $showtimes,
             'tmdb' => $this->tmdb,
         ]);
     }

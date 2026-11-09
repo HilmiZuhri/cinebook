@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name'); // Contoh: Studio 1, IMAX 3D, Premiere
             $table->string('type')->default('Regular'); // Regular, IMAX, Premiere
             $table->integer('capacity')->default(60);
+            $table->timestamps();
         });
     }
 

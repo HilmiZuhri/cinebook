@@ -4,13 +4,25 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\BookingController;
 
 // Rute Publik Customer Film
 Route::get('/', [MovieController::class, 'index'])->name('home');
 Route::get('/movies', [MovieController::class, 'catalog'])->name('movies.catalog');
 Route::get('/movies/{id}', [MovieController::class, 'show'])->name('movies.show');
 
-// Rute Jembatan Dashboard (Mengarahkan sesuai role)
+// Rute Pemesanan Tiket (Wajib Login)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/booking/{showtime}/seats', [BookingController::class, 'selectSeats'])->name('booking.seats');
+    Route::post('/booking/{showtime}/seats', [BookingController::class, 'store'])->name('booking.store');
+
+    // Placeholder rute checkout (akan diimplementasikan di Tahap 08)
+    Route::get('/checkout/{booking}', function (\App\Models\Booking $booking) {
+        return "<h1>Halaman Checkout Booking: {$booking->booking_code}</h1><p>Total: Rp " . number_format($booking->total_price, 0, ',', '.') . "</p><p>Status: {$booking->status}</p>";
+    })->name('checkout.show');
+});
+
+// Rute Jembatan Dashboard
 Route::middleware(['auth'])->get('/dashboard', function () {
     if (auth()->user()->isAdmin()) {
         return redirect()->route('admin.dashboard');

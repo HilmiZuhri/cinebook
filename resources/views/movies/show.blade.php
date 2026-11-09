@@ -57,7 +57,7 @@
                     </p>
                 </div>
 
-                <!-- CTA Tombol Pesan Jadwal (Akan dihubungkan ke Step 06 & 07) -->
+                <!-- CTA Tombol Pesan Jadwal -->
                 <div class="pt-6">
                     <a href="#jadwal-tayang" class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 font-bold text-white text-sm shadow-lg shadow-red-600/40 transition">
                         <span>Pesan Tiket Sekarang</span>
@@ -68,9 +68,9 @@
         </div>
     </div>
 
-    <!-- Konten Tambahan: Trailer & Pemain -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-14">
-        <!-- Trailer Resmi YouTube (Jika Ada) -->
+    <!-- Konten Tambahan: Trailer, Pemain & Jadwal Tayang (Dalam 1 Container Rapi) -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-16">
+        <!-- Trailer Resmi YouTube -->
         @if($trailerKey)
             <div>
                 <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
@@ -113,5 +113,52 @@
                 </div>
             </div>
         @endif
+
+        <!-- Section Jadwal Tayang Bioskop (Rapi Sejajar) -->
+        <div id="jadwal-tayang" class="pt-2">
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                <span class="w-1.5 h-6 bg-red-600 rounded-full inline-block"></span>
+                Jadwal Tayang & Tiket
+            </h2>
+
+            @if($showtimes->isEmpty())
+                <div class="p-8 rounded-2xl bg-neutral-900 border border-neutral-800 text-center">
+                    <p class="text-neutral-400 text-sm">Belum ada jadwal tayang untuk film ini di bioskop terdekat.</p>
+                </div>
+            @else
+                <div class="space-y-6">
+                    @foreach($showtimes as $cinemaName => $cinemaShowtimes)
+                        @php
+                            $cinemaInfo = $cinemaShowtimes->first()->studio->cinema;
+                        @endphp
+                        <div class="bg-neutral-900/90 border border-neutral-800 rounded-2xl p-6 shadow-xl">
+                            <!-- Info Bioskop -->
+                            <div class="border-b border-neutral-800/80 pb-4 mb-5">
+                                <h3 class="text-lg font-bold text-white">{{ $cinemaName }}</h3>
+                                <p class="text-xs text-neutral-400 mt-0.5">{{ $cinemaInfo->city }} • {{ $cinemaInfo->address }}</p>
+                            </div>
+
+                            <!-- Jam Tayang -->
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                                @foreach($cinemaShowtimes as $showtime)
+                                    <a href="{{ route('booking.seats', $showtime->id) }}" 
+                                       class="group p-3 rounded-xl bg-neutral-950 border border-neutral-800 hover:border-red-600 hover:bg-red-600/10 text-center transition">
+                                        <div class="text-[11px] font-semibold text-neutral-400 group-hover:text-neutral-200">
+                                            {{ $showtime->studio->name }}
+                                        </div>
+                                        <div class="text-base font-extrabold text-white mt-1 group-hover:text-red-400">
+                                            {{ $showtime->start_time->format('H:i') }} WIB
+                                        </div>
+                                        <div class="text-[10px] text-amber-400 font-semibold mt-1">
+                                            Rp {{ number_format($showtime->price, 0, ',', '.') }}
+                                        </div>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
     </div>
 </x-app-layout>
