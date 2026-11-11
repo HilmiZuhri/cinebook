@@ -53,6 +53,11 @@
                             </a>
                         @endif
 
+                        <!-- TAMBAHKAN LINK INI: -->
+                        <a href="{{ route('tickets.history') }}" class="text-xs font-semibold text-neutral-300 hover:text-white transition">
+                            Tiket Saya
+                        </a>
+
                         <span class="text-sm font-semibold text-neutral-300 hidden sm:inline">
                             {{ auth()->user()->name }}
                         </span>

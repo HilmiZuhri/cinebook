@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\Admin\DashboardController;
 
 // Rute Publik Customer Film
 Route::get('/', [MovieController::class, 'index'])->name('home');
@@ -16,10 +19,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/booking/{showtime}/seats', [BookingController::class, 'selectSeats'])->name('booking.seats');
     Route::post('/booking/{showtime}/seats', [BookingController::class, 'store'])->name('booking.store');
 
-    // Placeholder rute checkout (akan diimplementasikan di Tahap 08)
-    Route::get('/checkout/{booking}', function (\App\Models\Booking $booking) {
-        return "<h1>Halaman Checkout Booking: {$booking->booking_code}</h1><p>Total: Rp " . number_format($booking->total_price, 0, ',', '.') . "</p><p>Status: {$booking->status}</p>";
-    })->name('checkout.show');
+    // Rute Checkout & Pembayaran
+    Route::get('/checkout/{booking}', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/checkout/{booking}/pay', [CheckoutController::class, 'pay'])->name('checkout.pay');
+    Route::post('/checkout/{booking}/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
+
+    // Rute E-Ticket & Riwayat Tiket Saya
+    Route::get('/tickets/history', [TicketController::class, 'history'])->name('tickets.history');
+    Route::get('/tickets/{booking}', [TicketController::class, 'show'])->name('tickets.show');
 });
 
 // Rute Jembatan Dashboard
@@ -40,16 +47,5 @@ Route::get('/force-logout', function (Request $request) {
 
 // Area Khusus Admin
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return '
-            <div style="font-family: sans-serif; padding: 40px; background: #0f172a; color: white; min-height: 100vh;">
-                <h1 style="color: #ef4444;">Admin Dashboard CineBook</h1>
-                <p>Halo, <strong>' . e(auth()->user()->name) . '</strong> (' . e(auth()->user()->role) . ')</p>
-                <p>Email: ' . e(auth()->user()->email) . '</p>
-                <div style="margin-top: 20px;">
-                    <a href="/force-logout" style="background: #dc2626; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">Logout</a>
-                </div>
-            </div>
-        ';
-    })->name('dashboard');
+     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
