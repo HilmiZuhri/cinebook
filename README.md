@@ -1,58 +1,140 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎬 CineBook - Cinema Ticket Booking System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v3%2Fv4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+[![MySQL](https://img.shields.io/badge/MySQL-8.x-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com)
+[![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen?style=for-the-badge&logo=php)](https://phpunit.de)
 
-## About Laravel
+**CineBook** is an end-to-end cinema ticket booking platform built with **Laravel**. It features a headless authentication architecture via **Laravel Fortify**, live movie catalog synchronization using **The Movie Database (TMDB) REST API**, interactive seat map selection with concurrency protection, an administrative management dashboard, and a **Dark Cinematic** user interface styled with **Tailwind CSS**.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Developed as a showcase portfolio project demonstrating clean architecture, defensive programming against race conditions, and automated feature testing.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ✨ Key Features
 
-## Learning Laravel
+### 👤 Customer Experience (Dark Cinematic UI)
+- **Live TMDB Integration**: Real-time synchronization of Now Playing, Popular, and Upcoming movies with response caching.
+- **Movie Catalog & Instant Search**: Dynamic keyword query search with genre filters and metadata display.
+- **Cinematic Detail Pages**: Full-screen backdrop banners, official embedded YouTube trailers, cast list, runtime, ratings, and synopsis.
+- **Interactive Seat Map Selection**: Visual cinema screen layout with dynamic row-by-row seat states (Available, Selected, Booked).
+- **Checkout & Payment Simulation**: 15-minute countdown reservation hold timer with simulated QRIS / E-Wallet payments.
+- **Digital E-Tickets & Print Ready**: Boarding pass-style digital tickets with unique alphanumeric booking codes, CSS-rendered barcodes, and print-to-PDF styles.
+- **Booking History**: Customer order tracking with real-time status indicators (Paid, Pending, Cancelled, Expired).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 🛠️ Admin Panel & Management
+- **Business KPI Metrics**: Real-time aggregation of gross revenue, total tickets sold, active orders, and registered customers.
+- **Top-Grossing Movies Report**: Automated ranking of movies by ticket sales volume and revenue.
+- **Transaction Management**: Comprehensive booking ledger with status filtering and direct e-ticket verification.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🛡️ Architecture & Security Engineering
+- **Double Booking Prevention**: Utilizes **Database Transactions (`DB::transaction`)** combined with **Pessimistic Locking (`lockForUpdate`)** to prevent race conditions during concurrent seat reservations.
+- **Schedule Overlap Validation**: Automated conflict resolution ensuring a cinema studio cannot be double-booked for intersecting time windows.
+- **Headless Authentication**: Powered by **Laravel Fortify** decoupled from presentation views, backed by custom Role-Based Access Control (RBAC) middleware.
+- **Automated Feature Testing**: 100% test coverage on critical business logic, access authorization, and seat locking integrity.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## 🛠️ Tech Stack
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- **Framework**: Laravel 11 (PHP 8.2+)
+- **Authentication**: Laravel Fortify
+- **Frontend / Styling**: Blade Components, Tailwind CSS, Vite
+- **Database**: MySQL / MariaDB
+- **Third-Party API**: The Movie Database (TMDB) REST API v3
+- **Testing Suite**: PHPUnit / Laravel Feature Testing
 
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- PHP >= 8.2 (with `pdo_mysql` and `pdo_sqlite` extensions enabled)
+- Composer >= 2.x
+- Node.js >= 18.x & NPM
+- MySQL or MariaDB
+
+### Installation
+
+1. Clone the repository:
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/your-username/CineBook.git
+cd CineBook
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+2. Install PHP and Node dependencies:
+```bash
+composer install
+npm install
+```
 
-## Contributing
+3. Configure Environment:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. Update `.env` configuration:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=cinebook
+DB_USERNAME=root
+DB_PASSWORD=
 
-## Code of Conduct
+# TMDB Configuration
+TMDB_BASE_URL=https://api.themoviedb.org/3
+TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p
+TMDB_API_KEY=your_actual_tmdb_api_key_here
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+5. Run database migrations and seed default data:
+```bash
+php artisan migrate --seed
+```
 
-## Security Vulnerabilities
+6. Compile frontend assets and start local server:
+```bash
+npm run build
+php artisan serve
+```
+Access the application at `http://127.0.0.1:8000`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 🔑 Demo Credentials
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Role | Email | Password | Access Scope |
+|---|---|---|---|
+| **Administrator** | `admin@cinebook.com` | `password123` | Full access to Admin Dashboard, Analytics & Bookings |
+| **Customer** | `customer@cinebook.com` | `password123` | Movie browsing, seat reservation, checkout & e-tickets |
+
+---
+
+## 🧪 Running Automated Tests
+
+Run the full feature test suite verifying RBAC authorization, seat locking, and transactional integrity:
+
+```bash
+php artisan test --filter=BookingAndAuthorizationTest
+```
+
+Expected Output:
+```text
+   PASS  Tests\Feature\BookingAndAuthorizationTest
+  ✓ customer cannot access admin dashboard
+  ✓ admin can access admin dashboard
+  ✓ customer can book seats successfully
+  ✓ prevents double booking of same seat
+  ✓ cancelling booking releases seats
+
+  Tests:    5 passed (9 assertions)
+  Duration: ~0.5s
+```
+
+---
+
+## 📄 License
+
+This project is open-sourced software licensed under the [MIT License](LICENSE).
